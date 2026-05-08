@@ -1,1 +1,28 @@
+#include <iostream>
+using namespace std;
+	struct num_civica
+	  
+	  {
+	  	string classe_toponimo;
+	  	string Descrizione_Toponimo;
+	  	string num;
+	    string subalterno;
+	    string cap;
+	  	int SezioneISTAT;
+	  	string Lat;
+	  	string Lon;
+	  	string location;
+	  	};
+		  
 
+int main() 
+{
+	
+		  
+		  
+		  
+		  
+		  
+		  	
+	return 0;
+}
