@@ -1,7 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 using namespace std;
-	struct num_civica
-	  
+	struct info
 	  {
 	  	string classe_toponimo;
 	  	string Descrizione_Toponimo;
@@ -13,13 +14,28 @@ using namespace std;
 	  	string Lon;
 	  	string location;
 	  	};
+		 
+		 
+	 
+		 
 		  
 
 int main() 
 {
-	
+    info num_civica[2000];
 		  
-		  
+	ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv"); // Apre il file
+    string linea;
+
+    if (fileInput.is_open()) {
+        while (fileInput>>linea){ //getline(fileInput, linea)) { // Legge riga per riga
+            cout << linea << '\n';
+        }
+        fileInput.close(); // Chiude lo stream
+    } else {
+        cout << "Impossibile aprire il file";
+    }
+ 		  
 		  
 		  
 		  
