@@ -10,15 +10,18 @@ using namespace std;
 	    string subalterno;
 	    string cap;
 	  	int SezioneISTAT;
-	  	string Lat;
-	  	string Lon;
+	  	double Lat;
+	  	double Lon;
 	  	string location;
 	  	};
 		 
 		 
 	 
 		 
-		  
+		  ///funzione   visualizza
+		  ///funzione       ordine
+		  ///funzione      cerca per via
+		                 
 
 int main() 
 {
@@ -27,17 +30,20 @@ int main()
 	ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv"); // Apre il file
     string linea;
 
-    if (fileInput.is_open()) {
-        while (fileInput>>linea){ //getline(fileInput, linea)) { // Legge riga per riga
+    if (fileInput.is_open()) 
+{
+        while (fileInput>>linea)
+		{ //getline(fileInput, linea)) { // Legge riga per riga
             cout << linea << '\n';
+           getline()
         }
         fileInput.close(); // Chiude lo stream
-    } else {
+} else 
+	{
         cout << "Impossibile aprire il file";
     }
- 		  
-		  
-		  
+    
+ 
 		  
 		  	
 	return 0;
