@@ -41,10 +41,49 @@ int main()
 } else 
 	{
         cout << "Impossibile aprire il file";
+          return 0;
     }
     
  
 		  
 		  	
-	return 0;
+	
+getline(fileInput, linea);
+
+int d=0
+
+    while (getline(fileInput, linea) && d < 2000) 
+    {
+        stringstream ss(linea);
+        string campo;
+
+        getline(ss, numcivica[d].classetoponimo, ';');
+
+        getline(ss, numcivica[d].DescrizioneToponimo, ';');
+
+        getline(ss, num_civica[d].num, ';');
+
+        getline(ss, num_civica[d].subalterno, ';');
+
+        getline(ss, num_civica[d].cap, ';');
+
+        getline(ss, campo, ';');
+        num_civica[d].SezioneISTAT = stoi(campo);
+
+        getline(ss, campo, ';');
+        num_civica[d].Lat = stod(campo);
+
+        getline(ss, campo, ';');
+        num_civica[d].Lon = stod(campo);
+
+        getline(ss, num_civica[d].location, ';');
+
+        d++;
+    }
+
+    fileInput.close();
+
+    cout << "Caricate " << d << " righe nel vettore.\n";
+
+    return 0;
 }
