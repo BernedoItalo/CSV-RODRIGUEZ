@@ -1,20 +1,23 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
+
 using namespace std;
-	struct info
-	  {
-	  	string classe_toponimo;
-	  	string Descrizione_Toponimo;
-	  	string num;
-	    string subalterno;
-	    string cap;
-	  	int SezioneISTAT;
-	  	double Lat;
-	  	double Lon;
-	  	string location;
-	  	};
-		 
+
+struct info
+{
+    string classe_toponimo;
+    string Descrizione_Toponimo;
+    string num;
+    string Subalterno;
+    string cap;
+    int SezioneISTAT;
+    double Lat;
+    double Lon;
+    string location;
+};
+
 struct location
 {
 	 double Lat;
@@ -22,12 +25,44 @@ struct location
 
 };
 
+// FUNZIONE VISUALIZZA
+void visualizza(info num_civica[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {   
+        
+        cout <<"nRecord " << i + 1 << endl;
 
-		 
-		  ///funzione   visualizza
-		  ///funzione       ordine
-		  ///funzione      cerca per via
-		                 
+        cout << "Classe toponimo: "
+               << num_civica[i].classe_toponimo << endl;
+         
+        cout << "Descrizione: "
+               << num_civica[i].Descrizione_Toponimo << endl;
+
+        cout << "Numero: "
+               << num_civica[i].num << endl;
+
+        cout << "Subalterno: "
+               << num_civica[i].Subalterno << endl;
+ 
+        cout << "CAP: "
+               << num_civica[i].cap << endl;
+
+        cout << "Sezione ISTAT: "
+               << num_civica[i].SezioneISTAT << endl;
+
+        cout << "Latitudine: "
+               << num_civica[i].Lat << endl;
+
+        cout << "Longitudine: "
+                << num_civica[i].Lon << endl;
+
+        cout << "Location: "
+               << num_civica[i].location << endl;
+
+    
+    }
+}
 
 int main()
 {
@@ -44,7 +79,7 @@ int main()
 
     string linea;
 
-    // Salta scritta iniziale che non centra niente
+    // Salta intestazione
     getline(fileInput, linea);
 
     int d = 0;
@@ -54,15 +89,15 @@ int main()
         stringstream ss(linea);
         string campo;
 
-        getline(ss, num_civica[d].classe_toponimo, ',');      //////////////////////////classe_toponimo
+        getline(ss, num_civica[d].classe_toponimo, ',');
 
-        getline(ss, num_civica[d].Descrizione_Toponimo, ',');  //////////////////////////////Descrizione_Toponimo
+        getline(ss, num_civica[d].Descrizione_Toponimo, ',');
 
         getline(ss, num_civica[d].num, ',');
 
-        getline(ss, num_civica[d].Subalterno, ',');           //////////////////////////////////////////// subalterno
+        getline(ss, num_civica[d].Subalterno, ',');
 
-        getline(ss, num_civica[d].cap, ',');       //////////////////////////////////////////// cap
+        getline(ss, num_civica[d].cap, ',');
 
         //////////////////////////////////////////// ISTAT 
         getline(ss, campo, ',');
@@ -102,7 +137,7 @@ int main()
     cout <<"nCaricate " << endl<<d << " righe nel vettore."<<endl;
 
     // Visualizza solo quelle realmente caricate
-    visualizza(num_civica, d);
+    visualizza(num_civica,d);
 
     return 0;
 }
