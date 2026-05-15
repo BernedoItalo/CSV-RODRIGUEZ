@@ -15,7 +15,12 @@ using namespace std;
 	  	string location;
 	  	};
 		 
-		 
+struct location
+{
+	 double Lat;
+    double Lon;
+
+};
 	 
 		 
 		  ///funzione   visualizza
