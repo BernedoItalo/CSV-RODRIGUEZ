@@ -50,16 +50,16 @@ int main()
 	
 getline(fileInput, linea);
 
-int d=0
+int d=0;
 
     while (getline(fileInput, linea) && d < 2000) 
     {
         stringstream ss(linea);
         string campo;
 
-        getline(ss, numcivica[d].classetoponimo, ';');
+        getline(ss, num_civica[d].classe_toponimo, ';');
 
-        getline(ss, numcivica[d].DescrizioneToponimo, ';');
+        getline(ss, num_civica[d].Descrizione_Toponimo, ';');
 
         getline(ss, num_civica[d].num, ';');
 
