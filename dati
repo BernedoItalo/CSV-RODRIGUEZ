@@ -21,74 +21,88 @@ struct location
     double Lon;
 
 };
-	 
+
+
 		 
 		  ///funzione   visualizza
 		  ///funzione       ordine
 		  ///funzione      cerca per via
 		                 
 
-int main() 
+int main()
 {
-    info num_civica[2000];
-		  
-	ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv"); // Apre il file
+    info num_civica[1000];
+
+    ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv");
+
+    
+    if (!fileInput)
+    {
+        cout << "Errore apertura file!" << endl;
+        return 1;
+    }
+
     string linea;
 
-    if (fileInput.is_open()) 
-{
-        while (fileInput>>linea)
-		{ //getline(fileInput, linea)) { // Legge riga per riga
-            cout << linea << '\n';
-           getline()
-        }
-        fileInput.close(); // Chiude lo stream
-} else 
-	{
-        cout << "Impossibile aprire il file";
-          return 0;
-    }
-    
- 
-		  
-		  	
-	
-getline(fileInput, linea);
+    // Salta scritta iniziale che non centra niente
+    getline(fileInput, linea);
 
-int d=0;
+    int d = 0;
 
-    while (getline(fileInput, linea) && d < 2000) 
+    while (getline(fileInput, linea) && d < 1000)
     {
         stringstream ss(linea);
         string campo;
 
-        getline(ss, num_civica[d].classe_toponimo, ';');
+        getline(ss, num_civica[d].classe_toponimo, ',');      //////////////////////////classe_toponimo
 
-        getline(ss, num_civica[d].Descrizione_Toponimo, ';');
+        getline(ss, num_civica[d].Descrizione_Toponimo, ',');  //////////////////////////////Descrizione_Toponimo
 
-        getline(ss, num_civica[d].num, ';');
+        getline(ss, num_civica[d].num, ',');
 
-        getline(ss, num_civica[d].subalterno, ';');
+        getline(ss, num_civica[d].Subalterno, ',');           //////////////////////////////////////////// subalterno
 
-        getline(ss, num_civica[d].cap, ';');
+        getline(ss, num_civica[d].cap, ',');       //////////////////////////////////////////// cap
 
-        getline(ss, campo, ';');
-        num_civica[d].SezioneISTAT = stoi(campo);
+        //////////////////////////////////////////// ISTAT 
+        getline(ss, campo, ',');
 
-        getline(ss, campo, ';');
-        num_civica[d].Lat = stod(campo);
+        if (!campo.empty())
+            num_civica[d].SezioneISTAT = stoi(campo);
+        else
+            num_civica[d].SezioneISTAT = 0;
 
-        getline(ss, campo, ';');
-        num_civica[d].Lon = stod(campo);
+         //////////////////////////////////////////// Lat  
+        getline(ss, campo, ',');
 
-        getline(ss, num_civica[d].location, ';');
+       
+    
+        if (!campo.empty())
+            num_civica[d].Lat = stod(campo);
+        else
+            num_civica[d].Lat = 0;
+
+        ////////////////////////////////////////////// Lon 
+        getline(ss, campo, ',');
+
+    
+        if (!campo.empty())
+            num_civica[d].Lon = stod(campo);
+        else
+              num_civica[d].Lon = 0;
+
+         ////////////////////////////////////////////  Location 
+            getline(ss, num_civica[d].location);
 
         d++;
     }
 
     fileInput.close();
 
-    cout << "Caricate " << d << " righe nel vettore.\n";
+    cout <<"nCaricate " << endl<<d << " righe nel vettore."<<endl;
+
+    // Visualizza solo quelle realmente caricate
+    visualizza(num_civica, d);
 
     return 0;
 }
