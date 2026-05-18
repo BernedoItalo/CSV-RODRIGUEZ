@@ -6,7 +6,7 @@
 using namespace std;
 
 struct info
-{
+	{
     string classe_toponimo;
     string Descrizione_Toponimo;
     string num;
@@ -16,53 +16,42 @@ struct info
     double Lat;
     double Lon;
     string location;
-};
+	};
 
 struct location
 {
-	 double Lat;
+    double Lat;
     double Lon;
-
 };
 
-// FUNZIONE VISUALIZZA
-void visualizza(info num_civica[], int n)
+/////////////////////// FUNZIONE VISUALIZZA
+info visualizza(info num_civica[], int i)
 {
-    for (int i = 0; i < n; i++)
-    {   
-        
-        cout <<"nRecord " << i + 1 << endl;
+    info dato;
 
-        cout << "Classe toponimo: "
-               << num_civica[i].classe_toponimo << endl;
-         
-        cout << "Descrizione: "
-               << num_civica[i].Descrizione_Toponimo << endl;
+    dato.classe_toponimo = num_civica[i].classe_toponimo;
 
-        cout << "Numero: "
-               << num_civica[i].num << endl;
+    dato.Descrizione_Toponimo = num_civica[i].Descrizione_Toponimo;
 
-        cout << "Subalterno: "
-               << num_civica[i].Subalterno << endl;
- 
-        cout << "CAP: "
-               << num_civica[i].cap << endl;
+    dato.num = num_civica[i].num;
 
-        cout << "Sezione ISTAT: "
-               << num_civica[i].SezioneISTAT << endl;
+    dato.Subalterno = num_civica[i].Subalterno;
 
-        cout << "Latitudine: "
-               << num_civica[i].Lat << endl;
+    dato.cap = num_civica[i].cap;
 
-        cout << "Longitudine: "
-                << num_civica[i].Lon << endl;
+    dato.SezioneISTAT = num_civica[i].SezioneISTAT;
 
-        cout << "Location: "
-               << num_civica[i].location << endl;
+    dato.Lat = num_civica[i].Lat;
 
-    
-    }
+    dato.Lon = num_civica[i].Lon;
+
+    dato.location = num_civica[i].location;
+
+    return dato;
 }
+
+
+
 
 int main()
 {
@@ -70,21 +59,20 @@ int main()
 
     ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv");
 
-    
-    if (!fileInput)
-    {
-        cout << "Errore apertura file!" << endl;
-        return 1;
-    }
+   	 if (!fileInput)
+    	{
+        	cout << "Errore apertura file!" << endl;
+       	 return 1;
+    	}
 
     string linea;
 
-    // Salta intestazione
+    //////// evita un bug della lettura saltando un pezzo di esso
     getline(fileInput, linea);
 
-    int d = 0;
+    int d = 0; ///contatore
 
-    while (getline(fileInput, linea) && d < 1000)
+    while (getline(fileInput, linea) && d < 1000)       ///inizio codice per inserire i dati nell'array
     {
         stringstream ss(linea);
         string campo;
@@ -99,7 +87,7 @@ int main()
 
         getline(ss, num_civica[d].cap, ',');
 
-        //////////////////////////////////////////// ISTAT 
+        //////////////////////////////////////////// ISTAT
         getline(ss, campo, ',');
 
         if (!campo.empty())
@@ -107,37 +95,61 @@ int main()
         else
             num_civica[d].SezioneISTAT = 0;
 
-         //////////////////////////////////////////// Lat  
+        //////////////////////////////////////////// Lat
         getline(ss, campo, ',');
 
-       
-    
         if (!campo.empty())
             num_civica[d].Lat = stod(campo);
         else
             num_civica[d].Lat = 0;
 
-        ////////////////////////////////////////////// Lon 
+        ////////////////////////////////////////////// Lon
         getline(ss, campo, ',');
 
-    
         if (!campo.empty())
             num_civica[d].Lon = stod(campo);
         else
-              num_civica[d].Lon = 0;
+            num_civica[d].Lon = 0;
 
-         ////////////////////////////////////////////  Location 
-            getline(ss, num_civica[d].location);
+        //////////////////////////////////////////// Location
+        getline(ss, num_civica[d].location);
 
         d++;
-    }
+    }                                                              ///fine  codice per inserire i dati nell'array
 
     fileInput.close();
 
-    cout <<"nCaricate " << endl<<d << " righe nel vettore."<<endl;
+ 
 
-    // Visualizza solo quelle realmente caricate
-    visualizza(num_civica,d);
+    // visualizza
+    for (int i = 0; i < d; i++)           //cicclo per visualizzare atraverso il salvataggio dei datti della struct in unaltra variabile struct
+    {
+        info dato = visualizza(num_civica, i);
 
-    return 0;
+        cout <<endl<< "Record " << i + 1 << endl;
+
+        cout << "Classe toponimo:"
+             << dato.classe_toponimo << endl;
+
+        cout << "Descrizione:"
+             << dato.Descrizione_Toponimo << endl;
+
+        cout << "Numero:"
+             << dato.num << endl;
+
+        cout << "Subalterno:" << dato.Subalterno << endl;
+
+        cout << "CAP:"<< dato.cap << endl;
+
+        cout << "Sezione ISTAT:"<< dato.SezioneISTAT << endl;
+
+        cout << "Latitudine:"<< dato.Lat << endl;
+
+        cout << "Longitudine: "<< dato.Lon << endl;
+
+        cout << "Location: "
+             << dato.location << endl;
+    }
+
+return 0;
 }
