@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -53,8 +54,11 @@ info visualizza(info num_civica[], int i)
 
 
 
+
+
 int main()
-{
+{   
+    int scelta=0;
     info num_civica[1000];
 
     ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv");
@@ -119,37 +123,76 @@ int main()
 
     fileInput.close();
 
- 
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      ////Menu
 
+
+
+
+    do
+{     
+     cout<<"1 visualizza"<<endl;
+     cout<<"2 cerca via"<<endl;
+     cout<<"3 scrittura in html del numero di record nel ISTAT"<<endl;
+      cin>>scelta;
+       system("cls");
+	switch(scelta)
+	{
+		case 1: 
+	 {  
+	  	  
     // visualizza
-    for (int i = 0; i < d; i++)           //cicclo per visualizzare atraverso il salvataggio dei datti della struct in unaltra variabile struct
-    {
-        info dato = visualizza(num_civica, i);
+   	 for (int i = 0; i < d; i++)           //cicclo per visualizzare atraverso il salvataggio dei datti della struct in unaltra variabile struct
+    	{
+        	info dato = visualizza(num_civica, i);
 
-        cout <<endl<< "contatore " << i + 1 << endl;
+        	cout <<endl<< "contatore " << i + 1 << endl;
 
-        cout << "Classe toponimo:"
+        	cout << "Classe toponimo:"
              << dato.classe_toponimo << endl;
 
-        cout << "Descrizione:"
+        	cout << "Descrizione:"
              << dato.Descrizione_Toponimo << endl;
 
-        cout << "Numero:"
+        	cout << "Numero:"
              << dato.num << endl;
 
-        cout << "Subalterno:" << dato.Subalterno << endl;
+        	cout << "Subalterno:" << dato.Subalterno << endl;
 
-        cout << "CAP:"<< dato.cap << endl;
+        	cout << "CAP:"<< dato.cap << endl;
 
-        cout << "Sezione ISTAT:"<< dato.SezioneISTAT << endl;
+        	cout << "Sezione ISTAT:"<< dato.SezioneISTAT << endl;
 
-        cout << "Latitudine:"<< dato.Lat << endl;
+        	cout << "Latitudine:"<< dato.Lat << endl;
 
-        cout << "Longitudine: "<< dato.Lon << endl;
+        	cout << "Longitudine: "<< dato.Lon << endl;
 
-        cout << "Location: "
-             << dato.location << endl;
-    }
+        	cout << "Location: "<< dato.location << endl;
+    	}
+              		break;
+		  
+	
+	  }
+       case 2:
+	   { cout<<"cerca via"<<endl;
+       	
+       	
+		break;
+	   }
+	   
+	  case 3:
+	  {
+	  	cout<<"numero di record istat"<<endl;
+		break;
+	  } 
+	}
+}
+     while(scelta!=0);
+ 
 
+
+
+
+    
 return 0;
 }
