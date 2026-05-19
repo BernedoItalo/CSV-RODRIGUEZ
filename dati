@@ -126,7 +126,7 @@ int main()
     {
         info dato = visualizza(num_civica, i);
 
-        cout <<endl<< "Record " << i + 1 << endl;
+        cout <<endl<< "contatore " << i + 1 << endl;
 
         cout << "Classe toponimo:"
              << dato.classe_toponimo << endl;
