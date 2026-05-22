@@ -51,6 +51,10 @@ info visualizza(info num_civica[], int i)
     return dato;
 }
 
+
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////// html
 void scriviRecordISTAT_HTML(info num_civica[], int d)
 {
@@ -114,7 +118,7 @@ void scriviRecordISTAT_HTML(info num_civica[], int d)
 
     for (int i = 0; i < nSezioni; i++)
     {
-        outfile << "<tr><td>" << sezioni[i] 
+        outfile << "<tr><td>"<< sezioni[i] 
                 << "</td><td>" << conteggi[i] 
                 << "</td></tr>\n";
     }
@@ -123,11 +127,89 @@ void scriviRecordISTAT_HTML(info num_civica[], int d)
 
     outfile.close();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////////funzione cerca via
-void cercaVia_HTML(info num_civica[], int d, string via)         ////ho malinterpretato la consegna 
+void cercaVia(info num_civica[], int d, string via)
 {
-  
+    info trovati[1000];
+    int n = 0;
+
+    // Cerca i record con la via inserita
+    for (int i = 0; i < d; i++)
+    {
+        if (num_civica[i].Descrizione_Toponimo == via)
+        {
+            trovati[n] = num_civica[i];
+            n++;
+        }
+    }
+
+    // Ordina per numero civico crescente (bubble sort semplice)
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            int num1 = atoi(trovati[j].num.c_str());
+            int num2 = atoi(trovati[j + 1].num.c_str());
+
+            if (num1 > num2)
+            {
+                info temp = trovati[j];
+                trovati[j] = trovati[j + 1];
+                trovati[j + 1] = temp;
+            }
+        }
+    }
+
+
+
+         cout << "Record trovati per la via: " << via ;
+       cout << "Totale record: " << n <<endl;
+
+
+    for (int i = 0; i < n; i++)
+    {
+                                 cout<<"NUM:"<<trovati[i].num <<endl;
+                                  cout<<"Subalterno:"<<trovati[i].Subalterno <<endl;
+                             cout <<"cap:"<< trovati[i].cap << endl;
+                            cout<<"Lat:"<<trovati[i].Lat <<endl;
+                             cout<<"Lon:"<<trovati[i].Lon <<endl;
+                                
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -260,9 +342,9 @@ int main()
     cin.ignore(); 
     getline(cin, via);
 
-    cercaVia_HTML(num_civica, d, via);
+    cercaVia(num_civica, d, via);
 
-    cout << "Scritturanel file HTML." << endl;
+  
     break;
 }
 	   
