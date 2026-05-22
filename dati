@@ -51,6 +51,143 @@ info visualizza(info num_civica[], int i)
     return dato;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////// html
+void scriviRecordISTAT_HTML(info num_civica[], int d)
+{
+    int sezioni[1000];
+    int conteggi[1000];
+    int nSezioni = 0;
+
+    // inizializza conteggi
+    for (int i = 0; i < 1000; i++)
+        conteggi[i] = 0;
+
+    // trova sezioni ISTAT diverse
+    for (int i = 0; i < d; i++)
+    {
+        int sez = num_civica[i].SezioneISTAT;
+        bool trovata = false;
+
+        for (int j = 0; j < nSezioni; j++)
+        {
+            if (sezioni[j] == sez)
+            {
+                trovata = true;
+                break;
+            }
+        }
+
+        if (!trovata)
+        {
+            sezioni[nSezioni] = sez;
+            nSezioni++;
+        }
+    }
+
+    // conta i record per ogni sezione
+    for (int i = 0; i < d; i++)
+    {
+        int sez = num_civica[i].SezioneISTAT;
+
+        for (int j = 0; j < nSezioni; j++)
+        {
+            if (sezioni[j] == sez)
+            {
+                conteggi[j]++;
+                break;
+            }
+        }
+    }
+
+    // scrittura nel file HTML esistente
+    ofstream outfile("esempio.html", ios::app);
+
+    if (!outfile)
+    {
+        cout << "Errore apertura file HTML!" << endl;
+        return;
+    }
+
+    outfile << "<h2>Numero di record per Sezione ISTAT</h2>\n";
+    outfile << "<table border='1' cellpadding='5'>\n";
+    outfile << "<tr><th>Sezione ISTAT</th><th>Record</th></tr>\n";
+
+    for (int i = 0; i < nSezioni; i++)
+    {
+        outfile << "<tr><td>" << sezioni[i] 
+                << "</td><td>" << conteggi[i] 
+                << "</td></tr>\n";
+    }
+
+    outfile << "</table><br>\n";
+
+    outfile.close();
+}
+////////////////////////////////////////////////////////funzione cerca via
+void cercaVia_HTML(info num_civica[], int d, string via)
+{
+    info trovati[1000];
+    int n = 0;
+
+    // Cerca i record con la via inserita
+    for (int i = 0; i < d; i++)
+    {
+        if (num_civica[i].Descrizione_Toponimo == via)
+        {
+            trovati[n] = num_civica[i];
+            n++;
+        }
+    }
+
+    // Ordina per numero civico crescente (bubble sort semplice)
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            int num1 = atoi(trovati[j].num.c_str());
+            int num2 = atoi(trovati[j + 1].num.c_str());
+
+            if (num1 > num2)
+            {
+                info temp = trovati[j];
+                trovati[j] = trovati[j + 1];
+                trovati[j + 1] = temp;
+            }
+        }
+    }
+
+    // Scrittura nel file HTML esistente
+    ofstream outfile("esempio.html", ios::app);
+
+    if (!outfile)
+    {
+        cout << "Errore apertura file HTML!" << endl;
+        return;
+    }
+
+         outfile << "<h2>Record trovati per la via: " << via << "</h2>\n";
+       outfile << "<p>Totale record: " << n << "</p>\n";
+
+     outfile << "<table border='1' cellpadding='5'>\n";
+       outfile << "<tr><th>Numero</th><th>Subalterno</th><th>CAP</th><th>Lat</th><th>Lon</th></tr>\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        outfile << "<tr>" << "<td>" << trovati[i].num << "</td>"
+                                  << "<td>" << trovati[i].Subalterno << "</td>"
+                             << "<td>" << trovati[i].cap << "</td>"
+                            << "<td>" << trovati[i].Lat << "</td>"
+                             << "<td>" << trovati[i].Lon << "</td>"
+                                  << "</tr>\n";
+    }
+
+    outfile << "</table><br>\n";
+
+    outfile.close();
+}
+
+
+
 
 
 
@@ -173,18 +310,25 @@ int main()
 		  
 	
 	  }
-       case 2:
-	   { cout<<"cerca via"<<endl;
-       	
-       	
-		break;
-	   }
+      case 2:
+{
+    string via;
+    cout << "Inserisci il nome della via nel file: ";
+    cin.ignore(); 
+    getline(cin, via);
+
+    cercaVia_HTML(num_civica, d, via);
+
+    cout << "Scritturanel file HTML." << endl;
+    break;
+}
 	   
-	  case 3:
-	  {
-	  	cout<<"numero di record istat"<<endl;
-		break;
-	  } 
+	 case 3:
+{
+    scriviRecordISTAT_HTML(num_civica, d);
+    cout << "Scrittura completata nel file HTML." << endl;
+    break;
+}
 	}
 }
      while(scelta!=0);
