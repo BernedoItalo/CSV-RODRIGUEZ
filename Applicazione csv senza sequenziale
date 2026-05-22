@@ -126,64 +126,7 @@ void scriviRecordISTAT_HTML(info num_civica[], int d)
 ////////////////////////////////////////////////////////funzione cerca via
 void cercaVia_HTML(info num_civica[], int d, string via)         ////ho malinterpretato la consegna 
 {
-    info trovati[1000];
-    int n = 0;
-
-    // Cerca i record con la via inserita
-    for (int i = 0; i < d; i++)
-    {
-        if (num_civica[i].Descrizione_Toponimo == via)
-        {
-            trovati[n] = num_civica[i];
-            n++;
-        }
-    }
-
-    // Ordina per numero civico crescente (bubble sort semplice)
-    for (int i = 0; i < n - 1; i++)
-    {
-        for (int j = 0; j < n - i - 1; j++)
-        {
-            int num1 = atoi(trovati[j].num.c_str());
-            int num2 = atoi(trovati[j + 1].num.c_str());
-
-            if (num1 > num2)
-            {
-                info temp = trovati[j];
-                trovati[j] = trovati[j + 1];
-                trovati[j + 1] = temp;
-            }
-        }
-    }
-
-    // Scrittura nel file HTML esistente
-    ofstream outfile("esempio.html", ios::app);
-
-    if (!outfile)  //negazione in caso non si apre
-    {
-        cout << "Errore apertura file HTML" << endl;
-        return;
-    }
-
-         outfile << "<h2>Record trovati per la via: " << via << "</h2>\n";
-       outfile << "<p>Totale record: " << n << "</p>\n";
-
-   
-       outfile << "<tr><th>Numero</th><th>Subalterno</th><th>CAP</th><th>Lat</th><th>Lon</th></tr>\n";
-
-    for (int i = 0; i < n; i++)
-    {
-        outfile << "<tr>" << "<td>" << trovati[i].num << "</td>" //PER MANDARE A CAPO
-                                  << "<td>" << trovati[i].Subalterno << "</td>"
-                             << "<td>" << trovati[i].cap << "</td>"
-                            << "<td>" << trovati[i].Lat << "</td>"
-                             << "<td>" << trovati[i].Lon << "</td>"
-                                       << "</tr>\n";
-    }
-
-    outfile << "</table><br>\n";
-
-    outfile.close();
+  
 }
 
 
