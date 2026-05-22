@@ -124,7 +124,7 @@ void scriviRecordISTAT_HTML(info num_civica[], int d)
     outfile.close();
 }
 ////////////////////////////////////////////////////////funzione cerca via
-void cercaVia_HTML(info num_civica[], int d, string via)
+void cercaVia_HTML(info num_civica[], int d, string via)         ////ho malinterpretato la consegna 
 {
     info trovati[1000];
     int n = 0;
