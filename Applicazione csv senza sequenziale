@@ -159,26 +159,26 @@ void cercaVia_HTML(info num_civica[], int d, string via)
     // Scrittura nel file HTML esistente
     ofstream outfile("esempio.html", ios::app);
 
-    if (!outfile)
+    if (!outfile)  //negazione in caso non si apre
     {
-        cout << "Errore apertura file HTML!" << endl;
+        cout << "Errore apertura file HTML" << endl;
         return;
     }
 
          outfile << "<h2>Record trovati per la via: " << via << "</h2>\n";
        outfile << "<p>Totale record: " << n << "</p>\n";
 
-     outfile << "<table border='1' cellpadding='5'>\n";
+   
        outfile << "<tr><th>Numero</th><th>Subalterno</th><th>CAP</th><th>Lat</th><th>Lon</th></tr>\n";
 
     for (int i = 0; i < n; i++)
     {
-        outfile << "<tr>" << "<td>" << trovati[i].num << "</td>"
+        outfile << "<tr>" << "<td>" << trovati[i].num << "</td>" //PER MANDARE A CAPO
                                   << "<td>" << trovati[i].Subalterno << "</td>"
                              << "<td>" << trovati[i].cap << "</td>"
                             << "<td>" << trovati[i].Lat << "</td>"
                              << "<td>" << trovati[i].Lon << "</td>"
-                                  << "</tr>\n";
+                                       << "</tr>\n";
     }
 
     outfile << "</table><br>\n";
