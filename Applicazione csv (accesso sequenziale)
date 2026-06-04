@@ -215,9 +215,9 @@ int main()
             cin.ignore();
 
             if (Insert_dati(classe, descrizione, numero, subalterno, CAP, ISTAT, lat, lng))
-                cout << "\nRecord inserito con successo!" << endl;
+                cout << "\nRecord inserito con successo" << endl;
             else
-                cout << "\nErrore durante l'inserimento!" << endl;
+                cout << "\nErrore durante l'inserimento" << endl;
             break;
 
         case 2: ////////////////////////////////////////////////////////////////VISUALIZZAZIONE 
@@ -268,9 +268,9 @@ int main()
             getline(cin, subalterno);
 
             if (Delete_dati(descrizione, numero, subalterno))
-                cout << "\nRecord cancellato con successo!" << endl;
+                cout << "\nRecord cancellato con successo" << endl;
             else
-                cout << "\nRecord non trovato!" << endl;
+                cout << "\nRecord non trovato" << endl;
             break;
 
         case 0:
