@@ -7,7 +7,7 @@
 using namespace std;
 
 struct info
-	{
+{
     string classe_toponimo;
     string Descrizione_Toponimo;
     string num;
@@ -17,56 +17,75 @@ struct info
     double Lat;
     double Lon;
     string location;
-	};
-
-struct location
-{
-    double Lat;
-    double Lon;
 };
 
-/////////////////////// FUNZIONE VISUALIZZA
-info visualizza(info num_civica[], int i)
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////FUNZIONE CARICAMENTO
+int caricaDati(info num_civica[])
 {
-    info dato;
+    ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv");
 
-    dato.classe_toponimo = num_civica[i].classe_toponimo;
+    if (!fileInput)
+    {
+        cout << "Errore apertura " << endl;
+        return 0;
+    }
 
-    dato.Descrizione_Toponimo = num_civica[i].Descrizione_Toponimo;
+    string linea;
+    getline(fileInput, linea); // intestazione
 
-    dato.num = num_civica[i].num;
+    int d = 0;
 
-    dato.Subalterno = num_civica[i].Subalterno;
+    while (getline(fileInput, linea) && d < 1000) //mentre  legge ed d e minore di 1000
+    {
+        stringstream ss(linea); //permette di leggere quella riga del file e facilita il get line(file temporaneo
+        string campo;
 
-    dato.cap = num_civica[i].cap;
+        getline(ss, num_civica[d].classe_toponimo, ','); //il , serve per capire quando il valore e quello che ci serve
+        getline(ss, num_civica[d].Descrizione_Toponimo, ',');
+        getline(ss, num_civica[d].num, ',');
+        getline(ss, num_civica[d].Subalterno, ',');
+        getline(ss, num_civica[d].cap, ',');
 
-    dato.SezioneISTAT = num_civica[i].SezioneISTAT;
+        getline(ss, campo, ',');
+        num_civica[d].SezioneISTAT = campo.empty() ? 0 : stoi(campo);   //  stoi serve per convertire da stringa a intero 
 
-    dato.Lat = num_civica[i].Lat;
+        getline(ss, campo, ',');
+        num_civica[d].Lat = campo.empty() ? 0.0 : stod(campo);      // stod serve per convertire da stringa a double
 
-    dato.Lon = num_civica[i].Lon;
+        getline(ss, campo, ',');
+        num_civica[d].Lon = campo.empty() ? 0.0 : stod(campo);
+                          //campo empty ? e per vedere se vuoto e in caso sia vuoto il valore e 0.0 altimenti fa la conversione mantenendo con lo stod
 
-    dato.location = num_civica[i].location;
+        getline(ss, num_civica[d].location);
 
-    return dato;
+        d++; //contatore
+    }
+
+    fileInput.close();
+
+    cout << "Caricati " << d << " record." << endl;
+
+    return d;
 }
 
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////// html
-void scriviRecordISTAT_HTML(info num_civica[], int d)
+////////////////////////////////////////////////////////////////////////////////////////////////////FUNZIONE VISUALIZZA
+info visualizza(info num_civica[], int i)
 {
-    int sezioni[1000];
-    int conteggi[1000];
-    int nSezioni = 0;
+    return num_civica[i];
+}
 
-    // inizializza conteggi
-    for (int i = 0; i < 1000; i++)
-        conteggi[i] = 0;
+////////////////////////////////////////////////////////////////////////////////////////////////////FUNZIONE HTML
+void scriviRecordHTML(info num_civica[], int d)
+{
+    int sezioni[1000] = {0}; //qui tutto le sezioni diverse del ISTAT
+    int conteggi[1000] = {0}; //salviamo il record per ogni sezione
+    int nSezioni = 0;    //numero di sezioni diverse
 
-    // trova sezioni ISTAT diverse
+
+// Controlla se questa sezione ce gia
     for (int i = 0; i < d; i++)
     {
         int sez = num_civica[i].SezioneISTAT;
@@ -77,10 +96,11 @@ void scriviRecordISTAT_HTML(info num_civica[], int d)
             if (sezioni[j] == sez)
             {
                 trovata = true;
-                break;
+                break;                  // Esci dal ciclo interno
             }
         }
 
+// Se non è stata trovata viene aggiunta qua
         if (!trovata)
         {
             sezioni[nSezioni] = sez;
@@ -88,73 +108,59 @@ void scriviRecordISTAT_HTML(info num_civica[], int d)
         }
     }
 
-    // conta i record per ogni sezione
-    for (int i = 0; i < d; i++)
-    {
-        int sez = num_civica[i].SezioneISTAT;
 
-        for (int j = 0; j < nSezioni; j++)
+/// il secondo gruppo server per Contare quanti record appartengono a ciascuna sezione ISTAT.
+    for (int i = 0; i < d; i++) //controllo di ogni ricord
+    {
+        int sez = num_civica[i].SezioneISTAT; //varibile di appogio  per copiare
+
+        for (int j = 0; j < nSezioni; j++) //controllo di ogni sezione
         {
             if (sezioni[j] == sez)
             {
-                conteggi[j]++;
+                conteggi[j]++;  // in caso di sezione uguale aumenta il numero di esse
                 break;
             }
         }
     }
 
-    // scrittura nel file HTML esistente
-    ofstream outfile("esempio.html", ios::app);
+    ofstream outfile("esempio.html");
 
     if (!outfile)
     {
-        cout << "Errore apertura file HTML!" << endl;
+        cout << "Errore apertura file HTML" << endl;
         return;
     }
 
-    outfile << "<h2>Numero di record per Sezione ISTAT</h2>\n";
-    outfile << "<table border='1' cellpadding='5'>\n";
-    outfile << "<tr><th>Sezione ISTAT</th><th>Record</th></tr>\n";
+    outfile << "<html>" << endl;
+    outfile << "<body>" << endl;
+
+    outfile << "<h2>Numero di record per Sezione ISTAT</h2>" << endl; //h2 Heading tag per dare un livelo di importanza infatti e h2 cosi che il tittolo sia piu grande
+  
+    outfile << "<tr><th>Sezione ISTAT</th><th>Numero Record</th></tr>" << endl;  //th Table Header cella per scrivere   td table date celle normale
 
     for (int i = 0; i < nSezioni; i++)
     {
-        outfile << "<tr><td>"<< sezioni[i] 
-                << "</td><td>" << conteggi[i] 
-                << "</td></tr>\n";
+        outfile << "<tr><td>" << sezioni[i]
+                << "</td><td>" << conteggi[i]
+                << "</td></tr>" << endl;
     }
 
-    outfile << "</table><br>\n";
+    outfile << "</table>" << endl;   //corpo del file html
+    outfile << "</body>" << endl;
+    outfile << "</html>" << endl; 
 
     outfile.close();
+
+    cout << "Report HTML creato con successo!" << endl;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////funzione cerca via
+// ====================== CERCA VIA ======================
 void cercaVia(info num_civica[], int d, string via)
 {
     info trovati[1000];
     int n = 0;
 
-    // Cerca i record con la via inserita
     for (int i = 0; i < d; i++)
     {
         if (num_civica[i].Descrizione_Toponimo == via)
@@ -164,204 +170,130 @@ void cercaVia(info num_civica[], int d, string via)
         }
     }
 
-    // Ordina per numero civico crescente (bubble sort semplice)
-    for (int i = 0; i < n - 1; i++)
+    if (n == 0)
     {
-        for (int j = 0; j < n - i - 1; j++)
+        cout << "Nessun record trovato per la via: " << via << endl;
+        return;
+    }
+// sort 
+    for(int j = 0; j < n - 1; j++)
+    {
+        for(int i = j + 1; i < n; i++)
         {
             int num1 = atoi(trovati[j].num.c_str());
-            int num2 = atoi(trovati[j + 1].num.c_str());
+            int num2 = atoi(trovati[i].num.c_str());
 
-            if (num1 > num2)
+            if(num1 > num2)   // > per ordine crescente
             {
                 info temp = trovati[j];
-                trovati[j] = trovati[j + 1];
-                trovati[j + 1] = temp;
+                trovati[j] = trovati[i];
+                trovati[i] = temp;
             }
         }
     }
 
-
-
-         cout << "Record trovati per la via: " << via ;
-       cout << "Totale record: " << n <<endl;
-
+    cout << endl;
+    cout << "Record trovati per la via:" << via << endl;
+    cout << "Totale record:" << n << endl;
+    cout << endl;
 
     for (int i = 0; i < n; i++)
     {
-                                 cout<<"NUM:"<<trovati[i].num <<endl;
-                                  cout<<"Subalterno:"<<trovati[i].Subalterno <<endl;
-                             cout <<"cap:"<< trovati[i].cap << endl;
-                            cout<<"Lat:"<<trovati[i].Lat <<endl;
-                             cout<<"Lon:"<<trovati[i].Lon <<endl;
-                                
+        cout << "NUM: " << trovati[i].num
+             << " Subalterno: " << trovati[i].Subalterno
+             << " CAP: " << trovati[i].cap
+             << " Lat: " << trovati[i].Lat
+             << " Lon: " << trovati[i].Lon << endl;
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ====================== MAIN ======================
 int main()
-{   
-    int scelta=0;
+{
     info num_civica[1000];
-
-    ifstream fileInput("Comune_Bergamo_-_Numerazione_civica.csv");
-
-   	 if (!fileInput)
-    	{
-        	cout << "Errore apertura file!" << endl;
-       	 return 1;
-    	}
-
-    string linea;
-
-    //////// evita un bug della lettura saltando un pezzo di esso
-    getline(fileInput, linea);
-
-    int d = 0; ///contatore
-
-    while (getline(fileInput, linea) && d < 1000)       ///inizio codice per inserire i dati nell'array
-    {
-        stringstream ss(linea);
-        string campo;
-
-        getline(ss, num_civica[d].classe_toponimo, ',');
-
-        getline(ss, num_civica[d].Descrizione_Toponimo, ',');
-
-        getline(ss, num_civica[d].num, ',');
-
-        getline(ss, num_civica[d].Subalterno, ',');
-
-        getline(ss, num_civica[d].cap, ',');
-
-        //////////////////////////////////////////// ISTAT
-        getline(ss, campo, ',');
-
-        if (!campo.empty())
-            num_civica[d].SezioneISTAT = stoi(campo);
-        else
-            num_civica[d].SezioneISTAT = 0;
-
-        //////////////////////////////////////////// Lat
-        getline(ss, campo, ',');
-
-        if (!campo.empty())
-            num_civica[d].Lat = stod(campo);
-        else
-            num_civica[d].Lat = 0;
-
-        ////////////////////////////////////////////// Lon
-        getline(ss, campo, ',');
-
-        if (!campo.empty())
-            num_civica[d].Lon = stod(campo);
-        else
-            num_civica[d].Lon = 0;
-
-        //////////////////////////////////////////// Location
-        getline(ss, num_civica[d].location);
-
-        d++;
-    }                                                              ///fine  codice per inserire i dati nell'array
-
-    fileInput.close();
-
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      ////Menu
-
-
-
+    int d = 0;
+    int scelta;
 
     do
-{     
-     cout<<"1 visualizza"<<endl;
-     cout<<"2 cerca via"<<endl;
-     cout<<"3 scrittura in html del numero di record nel ISTAT"<<endl;
-      cin>>scelta;
-       system("cls");
-	switch(scelta)
-	{
-		case 1: 
-	 {  
-	  	  
-    // visualizza
-   	 for (int i = 0; i < d; i++)           //cicclo per visualizzare atraverso il salvataggio dei datti della struct in unaltra variabile struct
-    	{
-        	info dato = visualizza(num_civica, i);
+    {
+        system("cls");
 
-        	cout <<endl<< "contatore " << i + 1 << endl;
+        cout << "=== GESTIONE NUMERAZIONE CIVICA BERGAMO ===" << endl;
+        cout << "1. Carica dati dal file" << endl;
+        cout << "2. Visualizza tutti i record" << endl;
+        cout << "3. Cerca via" << endl;
+        cout << "4. Scrivi report HTML Sezioni ISTAT" << endl;
+        cout << "0. Esci" << endl;
+        cout << "Scelta: ";
+        cin >> scelta;
 
-        	cout << "Classe toponimo:"
-             << dato.classe_toponimo << endl;
+        switch (scelta)
+        {
+        case 1:
+            d = caricaDati(num_civica);
+            break;
 
-        	cout << "Descrizione:"
-             << dato.Descrizione_Toponimo << endl;
+        case 2:
+            if (d == 0)
+            {
+                cout << "Caricare prima i dati!" << endl;
+                break;
+            }
 
-        	cout << "Numero:"
-             << dato.num << endl;
+            for (int i = 0; i < d; i++)
+            {
+                info dato = visualizza(num_civica, i);
 
-        	cout << "Subalterno:" << dato.Subalterno << endl;
+                cout << endl;
+                cout << "Contatore: " << i + 1 << endl;
+                cout << "Classe: " << dato.classe_toponimo << endl;
+                cout << "Descrizione: " << dato.Descrizione_Toponimo << endl;
+                cout << "Numero: " << dato.num << endl;
+                cout << "Subalterno: " << dato.Subalterno << endl;
+                cout << "CAP: " << dato.cap << endl;
+                cout << "Sezione ISTAT: " << dato.SezioneISTAT << endl;
+                cout << "Lat: " << dato.Lat << endl;
+                cout << "Lon: " << dato.Lon << endl;
+                cout << "Location: " << dato.location << endl;
+            }
+            break;
 
-        	cout << "CAP:"<< dato.cap << endl;
+        case 3:
+        {
+            if (d == 0)
+            {
+                cout << "Caricare prima i dati!" << endl;
+                break;
+            }
 
-        	cout << "Sezione ISTAT:"<< dato.SezioneISTAT << endl;
+            string via;
+            cout << "Inserisci il nome della via: ";
+            cin.ignore();
+            getline(cin, via);
+            cercaVia(num_civica, d, via);
+            break;
+        }
 
-        	cout << "Latitudine:"<< dato.Lat << endl;
+        case 4:
+            if (d == 0)
+            {
+                cout << "Caricare prima i dati!" << endl;
+                break;
+            }
 
-        	cout << "Longitudine: "<< dato.Lon << endl;
+            scriviRecordHTML(num_civica, d);
+            break;
 
-        	cout << "Location: "<< dato.location << endl;
-    	}
-              		break;
-		  
-	
-	  }
-      case 2:
-{
-    string via;
-    cout << "Inserisci il nome della via nel file: ";
-    cin.ignore(); 
-    getline(cin, via);
-
-    cercaVia(num_civica, d, via);
-
-  
-    break;
-}
-	   
-	 case 3:
-{
-    scriviRecordISTAT_HTML(num_civica, d);
-    cout << "Scrittura completata nel file HTML." << endl;
-    break;
-}
-	}
-}
-     while(scelta!=0);
- 
-
-
-
+        case 0:
+            cout << "Uscita dal programma." << endl;
+            break;
 
     
-return 0;
+        }
+
+       
+
+    } while (scelta != 0);
+
+    return 0;
 }
