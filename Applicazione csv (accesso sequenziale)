@@ -1,1 +1,287 @@
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+/////////////////////FUNZIONE INSERIMENTO ======================
+
+////////////// Aggiunge un nuovo record in fondo al file CSV usando un file di appoggio
+bool Insert_dati(string classe, string descrizione, string numero, string subalterno, string CAP, string ISTAT, double lat, double lng)
+{
+    ifstream read("Comune_Bergamo_-_Numerazione_civica.csv");
+    ofstream write("file_copia.csv");
+
+    if (!read.is_open() || !write.is_open()) 
+    {
+        return false;
+    }
+
+    string line;
+    // Copia tutto il contenuto del file originale nel file di appoggio
+    while (getline(read, line)) 
+    {
+        write << line << endl;        // scrive una riga intera 
+    }
+
+    // Aggiunge il nuovo record alla fine
+    write << classe << "," << descrizione << "," << numero << "," << subalterno << ","<< CAP << "," << ISTAT << "," << lat << "," << lng  << ",\"Nuovo record inserito\"" << endl;
+//sono le nuove varibile inserite nella riga  del nuovo record
+    read.close();
+    write.close(); //chiude il file write(copia)
+
+
+    remove("Comune_Bergamo_-_Numerazione_civica.csv");//rimuove il vecchio file 
+    rename("file_copia.csv", "Comune_Bergamo_-_Numerazione_civica.csv"); //scambia i nomi del nuovo file modificato con quello vecchio
+    
+    return true;
+}
+
+
+
+//////////////////////////////////////////UNZIONE MODIFICA 
+
+// Modifica un record esistente cercando per descrizione, numero e subalterno usando i bool quindi vero se ce e falso se non ce
+bool Update_dati(string descr_old, string num_old, string sub_old,string classe_new, string descr_new, string num_new,  string sub_new, string CAP, string ISTAT, double lat, double lng)
+{
+    ifstream read("Comune_Bergamo_-_Numerazione_civica.csv"); ///Apre il file in lettura quello da cui prendiamo i dati
+    ofstream write("file_copia.csv");           //apre il file in scritture(quello che dobbiamo modificare
+
+    if (!read.is_open() || !write.is_open())  //se read o write non sono aperti non parte niente
+        return false; 
+
+    string line;
+    bool modificato = false; 
+
+    while (getline(read, line)) 
+    {
+        stringstream ss(line);
+        string c_classe, c_descr, c_num, c_sub;     //divisione in campi di valori
+
+        getline(ss, c_classe, ',');         
+        getline(ss, c_descr, ',');
+        getline(ss, c_num, ',');
+        getline(ss, c_sub, ',');
+
+        // Controlla se questo è il record da modificare controllando il vecchio con nuovo
+        if (c_descr == descr_old && c_num == num_old && c_sub == sub_old)      
+        {
+            // Scrive il record con i nuovi dati
+            write << classe_new << "," << descr_new << "," << num_new << "," << sub_new << "," << CAP << "," << ISTAT << ","  << lat << "," << lng << ",\"Record modificato\"" << endl;
+            modificato = true; //per capire se e avvenuto tutto con succeso
+        } 
+        else 
+        {
+            write << line << endl; //in caso non modifica restituisci lo stesso valore iniziale
+        }
+    }
+
+    read.close();     //chiusura
+    write.close(); //chiusura
+
+    if (modificato) 
+    {
+        remove("Comune_Bergamo_-_Numerazione_civica.csv");
+        rename("file_copia.csv", "Comune_Bergamo_-_Numerazione_civica.csv");
+    } 
+    else 
+    {
+        remove("file_copia.csv"); // pulisce il file temporaneo
+    }
+
+    return modificato;
+}
+
+///////////////////////////////////////////////////////FUNZIONE CANCELLAZIONE 
+
+// Cancella un record cercando per descrizione, numero e subalterno
+bool Delete_dati(string descr, string num, string sub)
+{
+    ifstream read("Comune_Bergamo_-_Numerazione_civica.csv");
+    ofstream write("file_copia.csv");
+
+    if (!read.is_open() || !write.is_open()) 
+        return false;
+
+    string line;
+    bool cancellato = false; //in caso di fallimento di apertura del file e se non si riesce a cancellare il file
+
+    while (getline(read, line)) 
+    {
+        stringstream ss(line);
+        string c1, c_descr, c_num, c_sub; //divisione per campi
+
+        getline(ss, c1, ',');
+        getline(ss, c_descr, ',');
+        getline(ss, c_num, ',');
+        getline(ss, c_sub, ',');
+
+        // Se corrisponde, salta la riga (cancella)
+        if (c_descr == descr && c_num == num && c_sub == sub) 
+        {
+            cancellato = true;
+            continue;
+        }
+
+        write << line << endl; //in caso non viene modificto niente
+    }
+
+    read.close();
+    write.close();
+
+    if (cancellato) // se cancella mostra il nuovo file
+    {
+        remove("Comune_Bergamo_-_Numerazione_civica.csv");
+        rename("file_copia.csv", "Comune_Bergamo_-_Numerazione_civica.csv");
+    } 
+    else         
+    {             //cancellazione in caso la cancellazione della funzione non abbia funzionato cosi da non lasciare un file in piu che dopo crea casini              
+        remove("file_copia.csv");
+    }
+
+    return cancellato;
+}
+
+// 77777777777777777777777777777FUNZIONE VISUALIZZAZIONE 
+void VisualizzaFile()
+{
+    ifstream file("Comune_Bergamo_-_Numerazione_civica.csv");
+    string line;
+    int cont = 0;
+
+    cout << "\n CONTENUTO DEL FILE CSV" << endl << endl;
+
+    while (getline(file, line)) 
+    {
+        cout << line << endl;
+        cont++;
+
+        // Paginazione ogni 15 righe
+        if (cont % 15 == 0) 
+        {
+            cout << "\nPremi INVIO per continuare" << endl;
+            cin.get();
+        }
+    }
+    cout << "\nTotale record visualizzati: " << cont << endl;
+}
+
+
+
+
+
+
+// /////////////////////////////////////////////////////////MAIN 
+int main()
+{
+    int scelta;
+    string classe, descrizione, numero, subalterno, CAP, ISTAT;
+    double lat, lng;
+
+    do 
+    {
+        system("cls");
+        cout << "=== GESTIONE FILE CSV - NUMERAZIONE CIVICA BERGAMO ===" << endl << endl;
+        cout << "1. Inserimento di un nuovo record" << endl;
+        cout << "2. Visualizzazione del file" << endl;
+        cout << "3. Modifica di un record" << endl;
+        cout << "4. Cancellazione di un record" << endl;
+        cout << "0. Esci" << endl << endl;
+        cout << "Scelta: ";
+        cin >> scelta;
+        cin.ignore();               // Pulisce il cin
+
+        switch (scelta)
+        {
+        case 1: //////////////////////////////////////////////INSERIMENTO
+            cout << "\n--- Inserimento Nuovo Record ---" << endl;
+            cout << "Classe: "; 
+            getline(cin, classe);
+            cout << "Descrizione (Via): "; 
+            getline(cin, descrizione);
+            cout << "Numero: "; 
+            getline(cin, numero);
+            cout << "Subalterno: "; 
+            getline(cin, subalterno);
+            cout << "CAP: "; 
+            getline(cin, CAP);
+            cout << "Sezione ISTAT: "; 
+            getline(cin, ISTAT);
+            cout << "Latitudine: "; 
+            cin >> lat;
+            cout << "Longitudine: "; 
+            cin >> lng;
+            cin.ignore();
+
+            if (Insert_dati(classe, descrizione, numero, subalterno, CAP, ISTAT, lat, lng))
+                cout << "\nRecord inserito con successo!" << endl;
+            else
+                cout << "\nErrore durante l'inserimento!" << endl;
+            break;
+
+        case 2: ////////////////////////////////////////////////////////////////VISUALIZZAZIONE 
+            VisualizzaFile();
+            break;
+
+        case 3: ////////////////////////////////////////////////////////////////// MODIFICA 
+            cout << "\n--- Modifica Record ---" << endl;
+            cout << "Descrizione attuale: "; 
+            getline(cin, descrizione);
+            cout << "Numero attuale: "; 
+            getline(cin, numero);
+            cout << "Subalterno attuale: "; 
+            getline(cin, subalterno);
+
+            cout << "\n--- Inserisci i NUOVI dati ---" << endl;
+            cout << "Nuova Classe: "; 
+            getline(cin, classe);
+            cout << "Nuova Descrizione: "; 
+            getline(cin, descrizione);
+            cout << "Nuovo Numero: "; 
+            getline(cin, numero);
+            cout << "Nuovo Subalterno: "; 
+            getline(cin, subalterno);
+            cout << "Nuovo CAP: "; 
+            getline(cin, CAP);
+            cout << "Nuova ISTAT: "; 
+            getline(cin, ISTAT);
+            cout << "Nuova Latitudine: "; 
+            cin >> lat;
+            cout << "Nuova Longitudine: "; 
+            cin >> lng;
+            cin.ignore();
+
+            if (Update_dati(descrizione, numero, subalterno, classe, descrizione, numero, subalterno, CAP, ISTAT, lat, lng))
+                cout << "\nRecord modificato con successo" << endl;
+            else
+                cout << "\nRecord non trovato" << endl;
+            break;
+
+        case 4: ////////////////////////////////CANCELLAZIONE 
+            cout << "\n--- Cancellazione Record ---" << endl;
+            cout << "Descrizione: "; 
+            getline(cin, descrizione);
+            cout << "Numero: "; 
+            getline(cin, numero);
+            cout << "Subalterno: "; 
+            getline(cin, subalterno);
+
+            if (Delete_dati(descrizione, numero, subalterno))
+                cout << "\nRecord cancellato con successo!" << endl;
+            else
+                cout << "\nRecord non trovato!" << endl;
+            break;
+
+        case 0:
+            break;
+
+ 
+        }
+
+       
+
+    } while (scelta != 0);
+
+    return 0;
+}
